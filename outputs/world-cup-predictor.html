@@ -173,6 +173,7 @@
 
     .match-card:hover { transform: translateY(-2px); border-color: var(--line-strong); }
     .match-card.locked { border-color: rgba(0,194,124,.28); background: linear-gradient(135deg, var(--accent-soft), transparent 55%), var(--surface); }
+    .match-card.pending-card { grid-template-areas: "home scores away" "suggestion suggestion suggestion"; min-height: 146px; }
 
     .team { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
     .team.away { align-items: flex-end; text-align: right; }
@@ -181,6 +182,7 @@
 
     .score-wrap { display: flex; align-items: center; gap: 9px; }
     .dash { color: var(--muted); font-weight: 700; }
+    .pending-score { min-width: 48px; padding: 8px; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--muted); background: var(--input); text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .08em; }
 
     .score {
       width: 56px;
@@ -209,6 +211,7 @@
     .suggestion-score { font-size: .84rem; font-weight: 700; }
     .suggestion-reason { max-width: 400px; margin-top: 5px; color: var(--muted); font-size: .76rem; line-height: 1.45; }
     .confidence { color: var(--accent); font-weight: 600; }
+    .pending-label { color: var(--amber); }
     .apply-button { flex: 0 0 auto; min-height: 34px; padding: 0 12px; border: 1px solid rgba(0,194,124,.32); border-radius: 8px; color: var(--accent); background: var(--accent-soft); font-size: .77rem; font-weight: 700; cursor: pointer; transition: border-color .2s, background-color .2s; }
     .apply-button:hover { border-color: var(--accent); background: rgba(0,194,124,.15); }
     .match-card.locked .apply-button { display: none; }
@@ -310,9 +313,7 @@
       <div class="empty-state">No fixtures listed for this matchday.</div>
     </section>
     <section class="round-panel" id="panel-md2" role="tabpanel" aria-labelledby="tab-md2"></section>
-    <section class="round-panel" id="panel-md3" role="tabpanel" aria-labelledby="tab-md3" hidden>
-      <div class="empty-state">No fixtures listed for this matchday.</div>
-    </section>
+    <section class="round-panel" id="panel-md3" role="tabpanel" aria-labelledby="tab-md3" hidden></section>
   </main>
 
   <footer class="summary">
@@ -359,6 +360,43 @@
       { date: "Wed 24 Jun", home: "Paraguay", homeFlag: "🇵🇾", away: "Australia", awayFlag: "🇦🇺" },
       { date: "Wed 24 Jun", home: "Turkey", homeFlag: "🇹🇷", away: "USA", awayFlag: "🇺🇸" }
     ];
+
+    const teamFlags = Object.fromEntries(fixtures.flatMap(fixture => [
+      [fixture.home, fixture.homeFlag],
+      [fixture.away, fixture.awayFlag]
+    ]));
+
+    const md3Fixtures = [
+      { date: "Wed 24 Jun", group: "A", home: "Czechia", away: "Mexico" },
+      { date: "Wed 24 Jun", group: "A", home: "South Africa", away: "South Korea" },
+      { date: "Wed 24 Jun", group: "B", home: "Bosnia", away: "Qatar" },
+      { date: "Wed 24 Jun", group: "B", home: "Switzerland", away: "Canada" },
+      { date: "Wed 24 Jun", group: "C", home: "Morocco", away: "Haiti" },
+      { date: "Wed 24 Jun", group: "C", home: "Scotland", away: "Brazil" },
+      { date: "Thu 25 Jun", group: "D", home: "Paraguay", away: "Australia" },
+      { date: "Thu 25 Jun", group: "D", home: "Turkey", away: "USA" },
+      { date: "Thu 25 Jun", group: "E", home: "Curaçao", away: "Ivory Coast" },
+      { date: "Thu 25 Jun", group: "E", home: "Ecuador", away: "Germany" },
+      { date: "Thu 25 Jun", group: "F", home: "Japan", away: "Sweden" },
+      { date: "Thu 25 Jun", group: "F", home: "Tunisia", away: "Netherlands" },
+      { date: "Fri 26 Jun", group: "G", home: "Egypt", away: "Iran" },
+      { date: "Fri 26 Jun", group: "G", home: "New Zealand", away: "Belgium" },
+      { date: "Fri 26 Jun", group: "H", home: "Cape Verde", away: "Saudi Arabia" },
+      { date: "Fri 26 Jun", group: "H", home: "Uruguay", away: "Spain" },
+      { date: "Fri 26 Jun", group: "I", home: "Norway", away: "France" },
+      { date: "Fri 26 Jun", group: "I", home: "Senegal", away: "Iraq" },
+      { date: "Sat 27 Jun", group: "J", home: "Algeria", away: "Austria" },
+      { date: "Sat 27 Jun", group: "J", home: "Jordan", away: "Argentina" },
+      { date: "Sat 27 Jun", group: "K", home: "Colombia", away: "Portugal" },
+      { date: "Sat 27 Jun", group: "K", home: "DR Congo", away: "Uzbekistan" },
+      { date: "Sat 27 Jun", group: "L", home: "Croatia", away: "Ghana" },
+      { date: "Sat 27 Jun", group: "L", home: "Panama", away: "England" }
+    ].map(fixture => ({
+      ...fixture,
+      homeFlag: teamFlags[fixture.home],
+      awayFlag: teamFlags[fixture.away],
+      status: "waiting-md2"
+    }));
 
     const suggestedScores = [
       [2,0], [2,0], [1,2], [0,1], [1,1], [1,1], [3,0], [2,0], [3,0], [2,0],
@@ -453,6 +491,7 @@
     });
     const predictions = matches;
     const panel = document.querySelector("#panel-md2");
+    const md3Panel = document.querySelector("#panel-md3");
 
     function matchCard(fixture, index) {
       const suggestion = matches[index].prediction;
@@ -482,6 +521,24 @@
       panel.appendChild(section);
     });
 
+    function pendingMatchCard(fixture) {
+      return `<article class="match-card pending-card">
+        <div class="team home"><span class="flag" aria-hidden="true">${fixture.homeFlag}</span><span class="team-name">${fixture.home}</span></div>
+        <div class="pending-score">VS</div>
+        <div class="team away"><span class="flag" aria-hidden="true">${fixture.awayFlag}</span><span class="team-name">${fixture.away}</span></div>
+        <div class="suggestion">
+          <span class="suggestion-copy"><span class="suggestion-label pending-label">Group ${fixture.group} · Prediction pending</span><span class="suggestion-reason">Available after both teams complete MD2 and verified match statistics arrive.</span></span>
+        </div>
+      </article>`;
+    }
+
+    [...new Set(md3Fixtures.map(f => f.date))].forEach(date => {
+      const section = document.createElement("section");
+      section.className = "date-group";
+      section.innerHTML = `<h2 class="date-divider">${date}</h2><div class="fixture-grid">${md3Fixtures.map(f => f.date === date ? pendingMatchCard(f) : "").join("")}</div>`;
+      md3Panel.appendChild(section);
+    });
+
     function clampInput(input) {
       if (input.value === "") return;
       input.value = String(Math.max(0, Math.min(20, Number.parseInt(input.value, 10) || 0)));
@@ -496,12 +553,24 @@
     }
 
     function updateProgress() {
+      const activeRound = document.querySelector(".round-tab[aria-selected=true]").dataset.round;
+      if (activeRound === "md3") {
+        document.querySelector("#progressText").textContent = `0 / ${md3Fixtures.length} MD3 predictions ready`;
+        document.querySelector("#progressPercent").textContent = "0%";
+        document.querySelector("#progressFill").style.width = "0%";
+        const progress = document.querySelector("[role=progressbar]");
+        progress.setAttribute("aria-valuemax", md3Fixtures.length);
+        progress.setAttribute("aria-valuenow", 0);
+        document.querySelector("#copyButton").disabled = true;
+        return;
+      }
       const locked = predictions.filter(p => p.locked).length;
       const pct = Math.round(locked / fixtures.length * 100);
       document.querySelector("#progressText").textContent = `${locked} / ${fixtures.length} predictions locked`;
       document.querySelector("#progressPercent").textContent = `${pct}%`;
       document.querySelector("#progressFill").style.width = `${pct}%`;
       const progress = document.querySelector("[role=progressbar]");
+      progress.setAttribute("aria-valuemax", fixtures.length);
       progress.setAttribute("aria-valuenow", locked);
       document.querySelector("#copyButton").disabled = locked === 0;
     }
@@ -558,6 +627,7 @@
       tab.addEventListener("click", () => {
         document.querySelectorAll(".round-tab").forEach(t => t.setAttribute("aria-selected", String(t === tab)));
         document.querySelectorAll(".round-panel").forEach(p => p.hidden = p.id !== `panel-${tab.dataset.round}`);
+        updateProgress();
       });
     });
 
