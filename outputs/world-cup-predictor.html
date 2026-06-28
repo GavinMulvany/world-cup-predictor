@@ -301,11 +301,11 @@
       <p class="eyebrow">The road to the final</p>
       <h1>World Cup 2026 Predictions</h1>
       <p class="intro">Call every scoreline, lock in your picks, and keep your matchday predictions together in one place.</p>
-      <p class="data-note">Suggestions use MD1 results and post-match xG from <a href="https://xgquadrant.com/results" target="_blank" rel="noopener">xGQuadrant</a>, updated 18 June 2026. xG is a modelled estimate, not an official FIFA statistic.</p>
+      <p class="data-note">Round of 32 suggestions use finished group-stage results and post-match xG from <a href="https://xgquadrant.com/results" target="_blank" rel="noopener">xGQuadrant</a>, updated 28 June 2026, plus the confirmed knockout fixture list reported by <a href="https://www.sbnation.com/fifa-world-cup/1120327/2026-world-cup-round-of-32-full-list-of-matches-potential-round-of-16-games" target="_blank" rel="noopener">SB Nation</a>. xG is a modelled estimate, not an official FIFA statistic.</p>
       <div class="rounds" role="tablist" aria-label="Select matchday">
         <button class="round-tab" role="tab" aria-selected="false" aria-controls="panel-md1" id="tab-md1" data-round="md1">MD1</button>
         <button class="round-tab" role="tab" aria-selected="true" aria-controls="panel-md2" id="tab-md2" data-round="md2">MD2</button>
-        <button class="round-tab" role="tab" aria-selected="false" aria-controls="panel-md3" id="tab-md3" data-round="md3">MD3</button>
+        <button class="round-tab" role="tab" aria-selected="false" aria-controls="panel-md3" id="tab-md3" data-round="md3">R32</button>
       </div>
     </section>
 
@@ -366,37 +366,72 @@
       [fixture.away, fixture.awayFlag]
     ]));
 
-    const md3Fixtures = [
-      { date: "Wed 24 Jun", group: "A", home: "Czechia", away: "Mexico" },
-      { date: "Wed 24 Jun", group: "A", home: "South Africa", away: "South Korea" },
-      { date: "Wed 24 Jun", group: "B", home: "Bosnia", away: "Qatar" },
-      { date: "Wed 24 Jun", group: "B", home: "Switzerland", away: "Canada" },
-      { date: "Wed 24 Jun", group: "C", home: "Morocco", away: "Haiti" },
-      { date: "Wed 24 Jun", group: "C", home: "Scotland", away: "Brazil" },
-      { date: "Thu 25 Jun", group: "D", home: "Paraguay", away: "Australia" },
-      { date: "Thu 25 Jun", group: "D", home: "Turkey", away: "USA" },
-      { date: "Thu 25 Jun", group: "E", home: "Curaçao", away: "Ivory Coast" },
-      { date: "Thu 25 Jun", group: "E", home: "Ecuador", away: "Germany" },
-      { date: "Thu 25 Jun", group: "F", home: "Japan", away: "Sweden" },
-      { date: "Thu 25 Jun", group: "F", home: "Tunisia", away: "Netherlands" },
-      { date: "Fri 26 Jun", group: "G", home: "Egypt", away: "Iran" },
-      { date: "Fri 26 Jun", group: "G", home: "New Zealand", away: "Belgium" },
-      { date: "Fri 26 Jun", group: "H", home: "Cape Verde", away: "Saudi Arabia" },
-      { date: "Fri 26 Jun", group: "H", home: "Uruguay", away: "Spain" },
-      { date: "Fri 26 Jun", group: "I", home: "Norway", away: "France" },
-      { date: "Fri 26 Jun", group: "I", home: "Senegal", away: "Iraq" },
-      { date: "Sat 27 Jun", group: "J", home: "Algeria", away: "Austria" },
-      { date: "Sat 27 Jun", group: "J", home: "Jordan", away: "Argentina" },
-      { date: "Sat 27 Jun", group: "K", home: "Colombia", away: "Portugal" },
-      { date: "Sat 27 Jun", group: "K", home: "DR Congo", away: "Uzbekistan" },
-      { date: "Sat 27 Jun", group: "L", home: "Croatia", away: "Ghana" },
-      { date: "Sat 27 Jun", group: "L", home: "Panama", away: "England" }
-    ].map(fixture => ({
-      ...fixture,
-      homeFlag: teamFlags[fixture.home],
-      awayFlag: teamFlags[fixture.away],
-      status: "waiting-md2"
-    }));
+    Object.assign(teamFlags, {
+      "Australia": "🇦🇺",
+      "Bosnia and Herzegovina": "🇧🇦",
+      "Cape Verde": "🇨🇻",
+      "Canada": "🇨🇦",
+      "Mexico": "🇲🇽",
+      "Morocco": "🇲🇦",
+      "Paraguay": "🇵🇾",
+      "South Africa": "🇿🇦",
+      "Switzerland": "🇨🇭",
+      "USA": "🇺🇸"
+    });
+
+    const groupStats = {
+      "Germany": { points: 6, goalsFor: 10, goalsAgainst: 4, xgFor: 6.76, xgAgainst: 2.90 },
+      "Paraguay": { points: 4, goalsFor: 2, goalsAgainst: 4, xgFor: 1.10, xgAgainst: 4.14 },
+      "France": { points: 9, goalsFor: 10, goalsAgainst: 2, xgFor: 5.96, xgAgainst: 2.86 },
+      "Sweden": { points: 4, goalsFor: 7, goalsAgainst: 7, xgFor: 2.98, xgAgainst: 4.10 },
+      "South Africa": { points: 4, goalsFor: 2, goalsAgainst: 3, xgFor: 2.61, xgAgainst: 3.38 },
+      "Canada": { points: 4, goalsFor: 8, goalsAgainst: 3, xgFor: 7.49, xgAgainst: 2.29 },
+      "Netherlands": { points: 7, goalsFor: 10, goalsAgainst: 4, xgFor: 5.24, xgAgainst: 2.22 },
+      "Morocco": { points: 7, goalsFor: 6, goalsAgainst: 3, xgFor: 6.12, xgAgainst: 2.99 },
+      "Portugal": { points: 5, goalsFor: 6, goalsAgainst: 1, xgFor: 4.19, xgAgainst: 2.81 },
+      "Croatia": { points: 6, goalsFor: 5, goalsAgainst: 5, xgFor: 2.77, xgAgainst: 4.39 },
+      "Spain": { points: 7, goalsFor: 5, goalsAgainst: 0, xgFor: 5.26, xgAgainst: 0.54 },
+      "Austria": { points: 4, goalsFor: 6, goalsAgainst: 6, xgFor: 3.71, xgAgainst: 4.49 },
+      "USA": { points: 6, goalsFor: 8, goalsAgainst: 4, xgFor: 4.63, xgAgainst: 3.90 },
+      "Bosnia and Herzegovina": { points: 4, goalsFor: 5, goalsAgainst: 6, xgFor: 1.87, xgAgainst: 4.06 },
+      "Belgium": { points: 5, goalsFor: 6, goalsAgainst: 2, xgFor: 6.78, xgAgainst: 1.94 },
+      "Senegal": { points: 3, goalsFor: 8, goalsAgainst: 6, xgFor: 5.26, xgAgainst: 4.13 },
+      "Brazil": { points: 7, goalsFor: 7, goalsAgainst: 1, xgFor: 7.34, xgAgainst: 2.64 },
+      "Japan": { points: 5, goalsFor: 7, goalsAgainst: 3, xgFor: 3.93, xgAgainst: 1.47 },
+      "Ivory Coast": { points: 6, goalsFor: 4, goalsAgainst: 2, xgFor: 4.05, xgAgainst: 3.40 },
+      "Norway": { points: 6, goalsFor: 8, goalsAgainst: 7, xgFor: 6.42, xgAgainst: 4.02 },
+      "Mexico": { points: 9, goalsFor: 6, goalsAgainst: 0, xgFor: 3.73, xgAgainst: 1.51 },
+      "Ecuador": { points: 4, goalsFor: 2, goalsAgainst: 2, xgFor: 5.12, xgAgainst: 2.67 },
+      "England": { points: 7, goalsFor: 6, goalsAgainst: 2, xgFor: 6.12, xgAgainst: 1.53 },
+      "DR Congo": { points: 4, goalsFor: 4, goalsAgainst: 3, xgFor: 3.42, xgAgainst: 1.83 },
+      "Argentina": { points: 9, goalsFor: 8, goalsAgainst: 1, xgFor: 5.75, xgAgainst: 1.61 },
+      "Cape Verde": { points: 3, goalsFor: 2, goalsAgainst: 2, xgFor: 2.47, xgAgainst: 4.81 },
+      "Australia": { points: 4, goalsFor: 2, goalsAgainst: 2, xgFor: 2.08, xgAgainst: 2.68 },
+      "Egypt": { points: 5, goalsFor: 5, goalsAgainst: 3, xgFor: 3.79, xgAgainst: 4.56 },
+      "Switzerland": { points: 7, goalsFor: 7, goalsAgainst: 3, xgFor: 6.37, xgAgainst: 2.49 },
+      "Algeria": { points: 4, goalsFor: 5, goalsAgainst: 7, xgFor: 3.88, xgAgainst: 3.38 },
+      "Colombia": { points: 7, goalsFor: 4, goalsAgainst: 1, xgFor: 4.29, xgAgainst: 2.46 },
+      "Ghana": { points: 4, goalsFor: 2, goalsAgainst: 2, xgFor: 2.06, xgAgainst: 2.51 }
+    };
+
+    const round32Fixtures = [
+      { date: "Sun 28 Jun", matchNo: 73, home: "South Africa", away: "Canada", pick: [1, 2], model: [0.82, 1.81] },
+      { date: "Mon 29 Jun", matchNo: 74, home: "Germany", away: "Paraguay", pick: [2, 1], model: [1.82, 0.67] },
+      { date: "Mon 29 Jun", matchNo: 75, home: "Netherlands", away: "Morocco", pick: [1, 1], model: [1.37, 1.39] },
+      { date: "Mon 29 Jun", matchNo: 76, home: "Brazil", away: "Japan", pick: [2, 1], model: [1.47, 1.09] },
+      { date: "Tue 30 Jun", matchNo: 77, home: "France", away: "Sweden", pick: [2, 1], model: [1.68, 0.97] },
+      { date: "Tue 30 Jun", matchNo: 78, home: "Ivory Coast", away: "Norway", pick: [1, 2], model: [1.35, 1.64] },
+      { date: "Tue 30 Jun", matchNo: 79, home: "Mexico", away: "Ecuador", pick: [2, 1], model: [1.07, 1.10] },
+      { date: "Wed 1 Jul", matchNo: 80, home: "England", away: "DR Congo", pick: [2, 1], model: [1.33, 0.82] },
+      { date: "Wed 1 Jul", matchNo: 81, home: "USA", away: "Bosnia and Herzegovina", pick: [2, 1], model: [1.45, 0.96] },
+      { date: "Wed 1 Jul", matchNo: 82, home: "Belgium", away: "Senegal", pick: [2, 1], model: [1.82, 1.20] },
+      { date: "Thu 2 Jul", matchNo: 83, home: "Portugal", away: "Croatia", pick: [2, 1], model: [1.43, 0.93] },
+      { date: "Thu 2 Jul", matchNo: 84, home: "Spain", away: "Austria", pick: [2, 1], model: [1.63, 0.71] },
+      { date: "Thu 2 Jul", matchNo: 85, home: "Switzerland", away: "Algeria", pick: [2, 1], model: [1.62, 1.06] },
+      { date: "Fri 3 Jul", matchNo: 86, home: "Argentina", away: "Cape Verde", pick: [2, 1], model: [1.76, 0.68] },
+      { date: "Fri 3 Jul", matchNo: 87, home: "Colombia", away: "Ghana", pick: [2, 1], model: [1.13, 0.75] },
+      { date: "Fri 3 Jul", matchNo: 88, home: "Australia", away: "Egypt", pick: [1, 1], model: [1.11, 1.08] }
+    ];
 
     const suggestedScores = [
       [2,0], [2,0], [1,2], [0,1], [1,1], [1,1], [3,0], [2,0], [3,0], [2,0],
@@ -472,6 +507,18 @@
       return `${evidence} ${winner}'s stronger MD1 chance profile supports the ${homeGoals}–${awayGoals} pick.`;
     }
 
+    function groupSummary(team) {
+      const stats = groupStats[team];
+      return `${team}: ${stats.points} pts, ${stats.goalsFor}–${stats.goalsAgainst} goals, ${stats.xgFor.toFixed(2)}–${stats.xgAgainst.toFixed(2)} xG`;
+    }
+
+    function round32Reason(fixture) {
+      const [homeGoals, awayGoals] = fixture.pick;
+      const [homeModel, awayModel] = fixture.model;
+      const winner = homeGoals === awayGoals ? "This is a knockout draw after 90 minutes" : `${homeGoals > awayGoals ? fixture.home : fixture.away} edge it`;
+      return `${groupSummary(fixture.home)}; ${groupSummary(fixture.away)}. Model estimate ${homeModel.toFixed(2)}–${awayModel.toFixed(2)} expected goals. ${winner}, so the 90-minute pick is ${homeGoals}–${awayGoals}.`;
+    }
+
     const matches = fixtures.map((fixture, index) => {
       const [suggestedHomeGoals, suggestedAwayGoals] = suggestedScores[index];
       const difference = Math.abs(suggestedHomeGoals - suggestedAwayGoals);
@@ -490,6 +537,24 @@
       };
     });
     const predictions = matches;
+    const round32Matches = round32Fixtures.map((fixture, index) => {
+      const [suggestedHomeGoals, suggestedAwayGoals] = fixture.pick;
+      const difference = Math.abs(suggestedHomeGoals - suggestedAwayGoals);
+      const confidence = difference >= 2 ? "High" : difference === 1 ? "Medium" : "Balanced";
+      return {
+        ...fixture,
+        homeFlag: teamFlags[fixture.home],
+        awayFlag: teamFlags[fixture.away],
+        id: `r32-${fixture.matchNo}-${fixture.home}-${fixture.away}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+        stadium: null,
+        kickoff: null,
+        prediction: { suggestedHomeGoals, suggestedAwayGoals, confidence, reason: round32Reason(fixture), expectedGoalsTotal: fixture.model[0] + fixture.model[1] },
+        communityPercentages: { homeWin: null, draw: null, awayWin: null },
+        userPick: { homeGoals: "", awayGoals: "" },
+        locked: false,
+        activeTab: "prediction"
+      };
+    });
     const panel = document.querySelector("#panel-md2");
     const md3Panel = document.querySelector("#panel-md3");
 
@@ -521,21 +586,31 @@
       panel.appendChild(section);
     });
 
-    function pendingMatchCard(fixture) {
-      return `<article class="match-card pending-card">
+    function round32MatchCard(fixture, index) {
+      const suggestion = round32Matches[index].prediction;
+      return `<article class="match-card" data-index="${index}">
         <div class="team home"><span class="flag" aria-hidden="true">${fixture.homeFlag}</span><span class="team-name">${fixture.home}</span></div>
-        <div class="pending-score">VS</div>
+        <div class="score-wrap">
+          <label><span hidden>${fixture.home} score</span><input class="score home-score" type="number" min="0" max="20" inputmode="numeric" aria-label="${fixture.home} score"></label>
+          <span class="dash" aria-hidden="true">–</span>
+          <label><span hidden>${fixture.away} score</span><input class="score away-score" type="number" min="0" max="20" inputmode="numeric" aria-label="${fixture.away} score"></label>
+        </div>
         <div class="team away"><span class="flag" aria-hidden="true">${fixture.awayFlag}</span><span class="team-name">${fixture.away}</span></div>
         <div class="suggestion">
-          <span class="suggestion-copy"><span class="suggestion-label pending-label">Group ${fixture.group} · Prediction pending</span><span class="suggestion-reason">Available after both teams complete MD2 and verified match statistics arrive.</span></span>
+          <span class="suggestion-copy"><span class="suggestion-label">Match ${fixture.matchNo} · Suggested 90-min pick</span><span class="suggestion-score">${suggestion.suggestedHomeGoals}–${suggestion.suggestedAwayGoals} · <span class="confidence">${suggestion.confidence}</span></span><span class="suggestion-reason">${suggestion.reason}</span></span>
+          <button class="apply-button" type="button">Apply pick</button>
+        </div>
+        <div class="card-action">
+          <span class="check"><span aria-hidden="true">✓</span> Prediction locked</span>
+          <button class="lock-button" type="button">Lock</button>
         </div>
       </article>`;
     }
 
-    [...new Set(md3Fixtures.map(f => f.date))].forEach(date => {
+    [...new Set(round32Matches.map(f => f.date))].forEach(date => {
       const section = document.createElement("section");
       section.className = "date-group";
-      section.innerHTML = `<h2 class="date-divider">${date}</h2><div class="fixture-grid">${md3Fixtures.map(f => f.date === date ? pendingMatchCard(f) : "").join("")}</div>`;
+      section.innerHTML = `<h2 class="date-divider">${date}</h2><div class="fixture-grid">${round32Matches.map((f, i) => f.date === date ? round32MatchCard(f, i) : "").join("")}</div>`;
       md3Panel.appendChild(section);
     });
 
@@ -555,13 +630,15 @@
     function updateProgress() {
       const activeRound = document.querySelector(".round-tab[aria-selected=true]").dataset.round;
       if (activeRound === "md3") {
-        document.querySelector("#progressText").textContent = `0 / ${md3Fixtures.length} MD3 predictions ready`;
-        document.querySelector("#progressPercent").textContent = "0%";
-        document.querySelector("#progressFill").style.width = "0%";
+        const locked = round32Matches.filter(p => p.locked).length;
+        const pct = Math.round(locked / round32Matches.length * 100);
+        document.querySelector("#progressText").textContent = `${locked} / ${round32Matches.length} R32 predictions locked`;
+        document.querySelector("#progressPercent").textContent = `${pct}%`;
+        document.querySelector("#progressFill").style.width = `${pct}%`;
         const progress = document.querySelector("[role=progressbar]");
-        progress.setAttribute("aria-valuemax", md3Fixtures.length);
-        progress.setAttribute("aria-valuenow", 0);
-        document.querySelector("#copyButton").disabled = true;
+        progress.setAttribute("aria-valuemax", round32Matches.length);
+        progress.setAttribute("aria-valuenow", locked);
+        document.querySelector("#copyButton").disabled = locked === 0;
         return;
       }
       const locked = predictions.filter(p => p.locked).length;
@@ -575,18 +652,18 @@
       document.querySelector("#copyButton").disabled = locked === 0;
     }
 
-    panel.addEventListener("input", event => {
+    function handlePredictionInput(event) {
       if (event.target.matches(".score")) clampInput(event.target);
-    });
+    }
 
-    panel.addEventListener("click", event => {
+    function handlePredictionClick(event, predictionSet) {
       const button = event.target.closest(".lock-button, .apply-button");
       if (!button) return;
       const card = button.closest(".match-card");
       const index = Number(card.dataset.index);
       const homeInput = card.querySelector(".home-score");
       const awayInput = card.querySelector(".away-score");
-      const prediction = predictions[index];
+      const prediction = predictionSet[index];
 
       if (button.matches(".apply-button")) {
         homeInput.value = prediction.prediction.suggestedHomeGoals;
@@ -621,7 +698,12 @@
         button.textContent = "Edit";
       }
       updateProgress();
-    });
+    }
+
+    panel.addEventListener("input", handlePredictionInput);
+    md3Panel.addEventListener("input", handlePredictionInput);
+    panel.addEventListener("click", event => handlePredictionClick(event, predictions));
+    md3Panel.addEventListener("click", event => handlePredictionClick(event, round32Matches));
 
     document.querySelectorAll(".round-tab").forEach(tab => {
       tab.addEventListener("click", () => {
@@ -639,7 +721,9 @@
     });
 
     document.querySelector("#copyButton").addEventListener("click", async () => {
-      const text = predictions.map((p, i) => p.locked ? `${fixtures[i].homeFlag} ${fixtures[i].home} ${p.userPick.homeGoals}-${p.userPick.awayGoals} ${fixtures[i].away} ${fixtures[i].awayFlag}` : "").filter(Boolean).join("\n");
+      const activeRound = document.querySelector(".round-tab[aria-selected=true]").dataset.round;
+      const activePredictions = activeRound === "md3" ? round32Matches : predictions;
+      const text = activePredictions.map(p => p.locked ? `${p.homeFlag} ${p.home} ${p.userPick.homeGoals}-${p.userPick.awayGoals} ${p.away} ${p.awayFlag}` : "").filter(Boolean).join("\n");
       try {
         await navigator.clipboard.writeText(text);
         showToast("Predictions copied to clipboard");
